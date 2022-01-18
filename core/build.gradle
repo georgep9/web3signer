@@ -89,6 +89,10 @@ dependencies {
   testFixturesImplementation 'commons-lang:commons-lang'
   testFixturesApi 'tech.pegasys.teku.internal:bls'
   testFixturesImplementation 'org.apache.tuweni:tuweni-bytes'
+
+
+  implementation platform('software.amazon.awssdk:bom:2.15.0')
+  implementation 'software.amazon.awssdk:kms'
 }
 
 artifacts {

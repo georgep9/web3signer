@@ -2,14 +2,7 @@ package tech.pegasys.web3signer.core;
 
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.kms.KmsClient;
-import software.amazon.awssdk.services.kms.model.KeyMetadata;
-import software.amazon.awssdk.services.kms.model.DescribeKeyRequest;
-import software.amazon.awssdk.services.kms.model.DescribeKeyResponse;
-import software.amazon.awssdk.services.kms.model.SignRequest;
-import software.amazon.awssdk.services.kms.model.SignResponse;
-import software.amazon.awssdk.services.kms.model.VerifyRequest;
-import software.amazon.awssdk.services.kms.model.VerifyResponse;
-import software.amazon.awssdk.services.kms.model.KmsException;
+import software.amazon.awssdk.services.kms.model.*;
 
 import software.amazon.awssdk.regions.Region;
 
@@ -17,6 +10,7 @@ public class AwsKmsKey {
 
     private KmsClient kmsClient;
     private KeyMetadata keyMetadata;
+    private byte[] publicKey;
 
     public static KmsClient createKmsClient(){
         Region region = Region.US_EAST_2;
@@ -99,11 +93,33 @@ public class AwsKmsKey {
         }
     }
 
+    public byte[] getPublicKey(){
+        return getPublicKey(this.kmsClient, this.keyMetadata);
+    }
+
+    public static byte[] getPublicKey(KmsClient kmsClient, KeyMetadata keyMetadata){
+        try {
+            GetPublicKeyRequest getPublicKeyRequest = GetPublicKeyRequest.builder()
+                    .keyId(keyMetadata.keyId())
+                    .build();
+
+            GetPublicKeyResponse getPublicKeyResponse = kmsClient.getPublicKey(getPublicKeyRequest);
+            return getPublicKeyResponse.publicKey().asByteArray();
+        } catch (KmsException e) {
+            System.err.println(e.getMessage());
+            System.exit(1);
+            return null;
+        }
+    };
+
+    public byte[] publicKey() { return this.publicKey; }
+
     public void close() { this.kmsClient.close(); }
 
     public AwsKmsKey(String keyId){
         this.kmsClient = createKmsClient();
         this.keyMetadata = fetchKmsKeyMetadata(this.kmsClient, keyId);
+        this.publicKey = getPublicKey(this.kmsClient, this.keyMetadata);
     }
 
     public static void main(String[] args){

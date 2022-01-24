@@ -1,4 +1,4 @@
-package tech.pegasys.web3signer.core.util;
+package tech.pegasys.web3signer.core;
 
 import org.apache.tuweni.bytes.Bytes;
 import tech.pegasys.web3signer.core.AwsKmsSigner;

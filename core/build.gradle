@@ -93,6 +93,7 @@ dependencies {
 
   implementation platform('software.amazon.awssdk:bom:2.15.0')
   implementation 'software.amazon.awssdk:kms'
+  implementation 'software.amazon.awssdk:secretsmanager'
 }
 
 artifacts {

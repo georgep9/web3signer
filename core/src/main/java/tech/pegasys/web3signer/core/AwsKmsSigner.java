@@ -12,7 +12,7 @@ public class AwsKmsSigner implements ArtifactSigner {
 
     public AwsKmsSigner(String keyId) {
         this.awsKmsKey = new AwsKmsKey(keyId);
-        this.publicKey = this.awsKmsKey.publicKey().toString();
+        this.publicKey = this.awsKmsKey.publicKey();
     }
 
     @Override

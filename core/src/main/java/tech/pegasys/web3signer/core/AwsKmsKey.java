@@ -22,7 +22,7 @@ public class AwsKmsKey {
 
     private KmsClient kmsClient;
     private KeyMetadata keyMetadata;
-    private byte[] publicKey;
+    private String publicKey;
 
     public static KmsClient createKmsClient(){
         Region region = Region.US_EAST_2;
@@ -105,18 +105,18 @@ public class AwsKmsKey {
         }
     }
 
-    public byte[] getPublicKey(){
+    public String getPublicKey(){
         return getPublicKey(this.kmsClient, this.keyMetadata);
     }
 
-    public static byte[] getPublicKey(KmsClient kmsClient, KeyMetadata keyMetadata){
+    public static String getPublicKey(KmsClient kmsClient, KeyMetadata keyMetadata){
         try {
             GetPublicKeyRequest getPublicKeyRequest = GetPublicKeyRequest.builder()
                     .keyId(keyMetadata.keyId())
                     .build();
 
             GetPublicKeyResponse getPublicKeyResponse = kmsClient.getPublicKey(getPublicKeyRequest);
-            return getPublicKeyResponse.publicKey().asByteArray();
+            return getPublicKeyResponse.publicKey().toString();
         } catch (KmsException e) {
             System.err.println(e.getMessage());
             System.exit(1);
@@ -124,7 +124,7 @@ public class AwsKmsKey {
         }
     };
 
-    public byte[] publicKey() { return this.publicKey; }
+    public String publicKey() { return this.publicKey; }
 
     public void close() { this.kmsClient.close(); }
 

@@ -16,9 +16,9 @@ public class AwsSecretsManagerSigner implements ArtifactSigner {
   private AwsSecretsManagerKey awsSecretsManagerKey;
   private String publicKey;
 
-  public AwsSecretsManagerSigner(byte[] publicKey){
-    this.awsSecretsManagerKey = new AwsSecretsManagerKey(publicKey);
-    this.publicKey = publicKey.toString();
+  public AwsSecretsManagerSigner(String secretName){
+    this.awsSecretsManagerKey = new AwsSecretsManagerKey(secretName);
+    this.publicKey = this.awsSecretsManagerKey.getPublicKey();
   }
 
   @Override

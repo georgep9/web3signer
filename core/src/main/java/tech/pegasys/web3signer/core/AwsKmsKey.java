@@ -2,9 +2,21 @@ package tech.pegasys.web3signer.core;
 
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.kms.KmsClient;
-import software.amazon.awssdk.services.kms.model.*;
+import software.amazon.awssdk.services.kms.model.KeyMetadata;
+import software.amazon.awssdk.services.kms.model.DescribeKeyRequest;
+import software.amazon.awssdk.services.kms.model.DescribeKeyResponse;
+import software.amazon.awssdk.services.kms.model.KmsException;
+import software.amazon.awssdk.services.kms.model.SignRequest;
+import software.amazon.awssdk.services.kms.model.SignResponse;
+import software.amazon.awssdk.services.kms.model.VerifyRequest;
+import software.amazon.awssdk.services.kms.model.VerifyResponse;
+import software.amazon.awssdk.services.kms.model.GetPublicKeyRequest;
+import software.amazon.awssdk.services.kms.model.GetPublicKeyResponse;
+
 
 import software.amazon.awssdk.regions.Region;
+
+import java.nio.charset.StandardCharsets;
 
 public class AwsKmsKey {
 
@@ -125,7 +137,7 @@ public class AwsKmsKey {
     public static void main(String[] args){
         AwsKmsKey awsKmsKey = new AwsKmsKey("66496115-ce45-4cf1-8f4e-6aa0849d6e3f");
         awsKmsKey.describeKey();
-        byte[] data = "hello, world".getBytes();
+        byte[] data = "hello, world".getBytes(StandardCharsets.UTF_8);
         byte[] signature = awsKmsKey.signData(data);
         boolean isValid = awsKmsKey.verifyData(signature, data);
         if (isValid){

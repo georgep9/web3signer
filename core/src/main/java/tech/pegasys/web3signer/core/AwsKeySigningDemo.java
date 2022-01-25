@@ -9,10 +9,10 @@ public class AwsKeySigningDemo {
 
   public static void KmsDemo(String keyId, Bytes data) {
     AwsKmsSigner awsKmsSigner = new AwsKmsSigner(keyId);
-    System.out.println(awsKmsSigner.getIdentifier());
+    System.out.println("Public key: " + awsKmsSigner.getIdentifier());
 
     ArtifactSignature signature = awsKmsSigner.sign(data);
-    System.out.println(signature.toString());
+    System.out.println("Signature: " + signature.toString());
     awsKmsSigner.verifyMessage(signature, data);
 
     awsKmsSigner.close();
@@ -20,10 +20,10 @@ public class AwsKeySigningDemo {
 
   public static void SecretsManagerDemo(String secretName, Bytes data){
     AwsSecretsManagerSigner awsSecretsManagerSigner = new AwsSecretsManagerSigner(secretName);
-    System.out.println(awsSecretsManagerSigner.getIdentifier());
+    System.out.println("Public key: " + awsSecretsManagerSigner.getIdentifier());
 
     ArtifactSignature signature = awsSecretsManagerSigner.sign(data);
-    System.out.println(signature.toString());
+    System.out.println("Signature: " + signature.toString());
   }
 
   public static void main(String[] args){

@@ -16,8 +16,6 @@ import software.amazon.awssdk.services.kms.model.GetPublicKeyResponse;
 
 import software.amazon.awssdk.regions.Region;
 
-import java.nio.charset.StandardCharsets;
-
 public class AwsKmsKey {
 
     private KmsClient kmsClient;
@@ -44,15 +42,6 @@ public class AwsKmsKey {
             System.exit(1);
             return null;
         }
-    }
-
-    public void describeKey() { describeKey(this.keyMetadata); }
-
-    public static void describeKey(KeyMetadata keyMetadata){
-        System.out.println("The key description is "+keyMetadata.description());
-        System.out.println("The key ARN is "+keyMetadata.arn());
-        System.out.println("The key signing algorithm is "+keyMetadata.signingAlgorithmsAsStrings());
-        System.out.println("The key spec is "+keyMetadata.customerMasterKeySpecAsString());
     }
 
     public byte[] signData(byte[] data){
@@ -132,18 +121,6 @@ public class AwsKmsKey {
         this.kmsClient = createKmsClient();
         this.keyMetadata = fetchKmsKeyMetadata(this.kmsClient, keyId);
         this.publicKey = getPublicKey(this.kmsClient, this.keyMetadata);
-    }
-
-    public static void main(String[] args){
-        AwsKmsKey awsKmsKey = new AwsKmsKey("66496115-ce45-4cf1-8f4e-6aa0849d6e3f");
-        awsKmsKey.describeKey();
-        byte[] data = "hello, world".getBytes(StandardCharsets.UTF_8);
-        byte[] signature = awsKmsKey.signData(data);
-        boolean isValid = awsKmsKey.verifyData(signature, data);
-        if (isValid){
-            System.out.println("Successfully signed and verified.");
-        }
-        awsKmsKey.close();
     }
 
 }

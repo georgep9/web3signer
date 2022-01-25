@@ -1,8 +1,6 @@
 package tech.pegasys.web3signer.core;
 
 import org.apache.tuweni.bytes.Bytes;
-import tech.pegasys.web3signer.core.AwsKmsSigner;
-import tech.pegasys.web3signer.core.AwsSecretsManagerSigner;
 import tech.pegasys.web3signer.core.signing.ArtifactSignature;
 
 import java.nio.charset.StandardCharsets;
@@ -15,6 +13,9 @@ public class AwsKeySigningDemo {
 
     ArtifactSignature signature = awsKmsSigner.sign(data);
     System.out.println(signature.toString());
+    awsKmsSigner.verifyMessage(signature, data);
+
+    awsKmsSigner.close();
   }
 
   public static void SecretsManagerDemo(String secretName, Bytes data){

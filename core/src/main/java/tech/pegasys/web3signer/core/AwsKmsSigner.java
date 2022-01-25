@@ -25,4 +25,17 @@ public class AwsKmsSigner implements ArtifactSigner {
       byte[] signature = this.awsKmsKey.signData(message.toArray());
       return SecpArtifactSignature.fromBytes(Bytes.wrap(signature));
     }
+
+    public boolean verifyMessage(ArtifactSignature signature, Bytes message) {
+      boolean isValid = this.awsKmsKey.verifyData(signature.toString().getBytes(), message.toArray());
+      if (isValid){
+        System.out.println("Successfully signed and verified.");
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
+
+    public void close() { this.awsKmsKey.close(); }
 }

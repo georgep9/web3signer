@@ -15,6 +15,9 @@ import software.amazon.awssdk.services.kms.model.GetPublicKeyResponse;
 
 
 import software.amazon.awssdk.regions.Region;
+import tech.pegasys.web3signer.core.signing.ArtifactSignature;
+
+import java.nio.charset.StandardCharsets;
 
 public class AwsKmsKey {
 
@@ -117,8 +120,8 @@ public class AwsKmsKey {
 
     public void close() { this.kmsClient.close(); }
 
-    public AwsKmsKey(String keyId){
-        this.kmsClient = createKmsClient();
+    public AwsKmsKey(KmsClient kmsClient, String keyId){
+        this.kmsClient = kmsClient;
         this.keyMetadata = fetchKmsKeyMetadata(this.kmsClient, keyId);
         this.publicKey = getPublicKey(this.kmsClient, this.keyMetadata);
     }

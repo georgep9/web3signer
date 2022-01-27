@@ -1,5 +1,7 @@
 package tech.pegasys.web3signer.core;
 
+import io.vertx.core.json.Json;
+import io.vertx.core.json.JsonObject;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRequest;
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueResponse;
@@ -14,8 +16,7 @@ public class AwsSecretsManagerKey {
 
   private SecretsManagerClient secretsManagerClient;
   private String secretName;
-  private String publicKey;
-  private byte[] privateKey;
+  private String keyStoreValue;
 
   public static SecretsManagerClient createSecretsManagerClient(){
 
@@ -28,33 +29,15 @@ public class AwsSecretsManagerKey {
 
   }
 
-  public static String requestPublicKey(SecretsManagerClient secretsManagerClient, String secretName){
-    try {
-      DescribeSecretRequest describeSecretRequest = DescribeSecretRequest.builder()
-        .secretId(secretName)
-        .build();
-
-      DescribeSecretResponse response = secretsManagerClient.describeSecret(describeSecretRequest);
-      String publicKey = response.name();
-      return publicKey;
-    }
-    catch (SecretsManagerException e){
-      System.err.println(e.awsErrorDetails().errorMessage());
-      System.exit(1);
-    }
-    return null;
-  }
-
-  public static byte[] requestPrivateKey(SecretsManagerClient secretsManagerClient, String secretName){
+  public static String requestSecretValue(SecretsManagerClient secretsManagerClient, String secretName){
     try {
       GetSecretValueRequest getSecretValueRequest = GetSecretValueRequest.builder()
         .secretId(secretName)
         .build();
 
       GetSecretValueResponse valueResponse = secretsManagerClient.getSecretValue(getSecretValueRequest);
-      byte[] privateKey = valueResponse.secretString().getBytes(StandardCharsets.UTF_8);
 
-      return privateKey;
+      return valueResponse.secretString();
     }
     catch (SecretsManagerException e){
       System.err.println(e.awsErrorDetails().errorMessage());
@@ -63,16 +46,22 @@ public class AwsSecretsManagerKey {
     return null;
   }
 
+  public static String extractKeyStoreValue(String secretValue){
+    JsonObject secretValueJson = new JsonObject(secretValue);
+    String keyStoreValue = secretValueJson.getString("keystore");
+    return keyStoreValue;
+  }
+
+  public String getKeyStoreValue() { return this.keyStoreValue; }
+
   public void close() { this.secretsManagerClient.close(); }
 
-  public String getPublicKey() { return this.publicKey; }
-  public byte[] getPrivateKey() { return this.privateKey; }
 
-  public AwsSecretsManagerKey(String secretName){
-    this.secretsManagerClient = createSecretsManagerClient();
+
+  public AwsSecretsManagerKey(SecretsManagerClient secretsManagerClient, String secretName){
+    this.secretsManagerClient = secretsManagerClient;
     this.secretName = secretName;
-    this.publicKey = requestPublicKey(this.secretsManagerClient, this.secretName);
-    this.privateKey = requestPrivateKey(this.secretsManagerClient, this.secretName);
+    this.keyStoreValue = extractKeyStoreValue(requestSecretValue(this.secretsManagerClient, this.secretName));
   }
 
 }
